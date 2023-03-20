@@ -8,6 +8,7 @@ major=0
 minor=0
 build=0
 
+
 function help {
   echo "Usage: $(basename "$0") version=<newversion> or release=[major|feat|fix]"
 }
@@ -34,7 +35,7 @@ function main() {
       for file in "${fileListArr[@]}"; do
         setVersion "$version" "$file"
       done
-       echo "New version: $version"
+       echo "$version"
       exit
     else
       echo "Wrong version format, pls. use $versionPattern"
@@ -55,6 +56,10 @@ function main() {
     build="${BASH_REMATCH[3]}"
   fi
 
+  if [[ -z "$release" && -n $message ]]; then
+   release=$(echo "$message" | sed -E -e  's/^(fix|feat|major|breaking change):.*$/\1/g')
+  fi
+
   if [[ "$release" == "feat" ]]; then
     minor=$(echo "$minor + 1" | bc)
   elif [[ "$release" == "fix" ]]; then
@@ -70,7 +75,7 @@ function main() {
   for file in "${fileListArr[@]}"; do
     setVersion "${major}.${minor}.${build}" "$file"
   done
-  echo "New version: ${major}.${minor}.${build}"
+  echo "${major}.${minor}.${build}"
 }
 
 main "$@"
