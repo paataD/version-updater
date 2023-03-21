@@ -14,16 +14,16 @@ function help {
 }
 
 function addVerToFile {
-  echo  "$hash|$1|$(date +'%d-%m-%Y')" >| 'version'
+  echo "$hash|$1|$(date +'%d-%m-%Y')" >|'version'
 }
 
 function addGitTag {
-  eval "git tag $1 && git push origin $1"
+  eval "git tag v$1 && git push origin v$1"
 }
 
 function newVersion {
-  if [[  $(sed -E -e  's/^(\w+).*/\1/' version) != "$hash" ]]; then
-      return
+  if [[ ! -f version || $(sed -E -e 's/^(\w+).*/\1/' version) != "$hash" ]]; then
+    return
   fi
   false
 }
@@ -50,7 +50,7 @@ function main() {
       for file in "${fileListArr[@]}"; do
         setVersion "$version" "$file"
       done
-       echo "$version"
+      echo "$version"
       exit
     else
       echo "Wrong version format, pls. use $versionPattern"
@@ -72,7 +72,7 @@ function main() {
   fi
 
   if [[ -z "$release" && -n $message ]]; then
-   release=$(echo "$message" | sed -E -e  's/^(fix|feat|major|breaking change):.*$/\1/g')
+    release=$(echo "$message" | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
   fi
 
   if [[ "$release" == "feat" ]]; then
@@ -89,7 +89,9 @@ function main() {
 
   if newVersion; then
     for file in "${fileListArr[@]}"; do
-      setVersion "${major}.${minor}.${build}" "$file"
+      if [[ -f file ]]; then
+        setVersion "${major}.${minor}.${build}" "$file"
+      fi
     done
     addVerToFile "${major}.${minor}.${build}"
     addGitTag "${major}.${minor}.${build}"
