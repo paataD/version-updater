@@ -7,10 +7,25 @@ expressionPattern="\w+=\w+"
 major=0
 minor=0
 build=0
-
+hash=$(eval 'git rev-parse --short HEAD')
 
 function help {
   echo "Usage: $(basename "$0") version=<newversion> or release=[major|feat|fix]"
+}
+
+function addVerToFile {
+  echo  "$hash|$1|$(date +'%d-%m-%Y')" >| 'version'
+}
+
+function addGitTag {
+  eval "git tag $1 && git push origin $1"
+}
+
+function newVersion {
+  if [[  $(sed -E -e  's/^(\w+).*/\1/' version) != "$hash" ]]; then
+      return
+  fi
+  false
 }
 
 function parseArguments {
@@ -22,8 +37,8 @@ function parseArguments {
       export "$KEY"="$VALUE"
     fi
   done
-
 }
+
 function setVersion {
   sed -ri 's/("version":)\s+\".*"/\1 "'"$1"'"/g' "$2"
 }
@@ -72,10 +87,15 @@ function main() {
     exit 1
   fi
 
-  for file in "${fileListArr[@]}"; do
-    setVersion "${major}.${minor}.${build}" "$file"
-  done
-  echo "${major}.${minor}.${build}"
+  if newVersion; then
+    for file in "${fileListArr[@]}"; do
+      setVersion "${major}.${minor}.${build}" "$file"
+    done
+    addVerToFile "${major}.${minor}.${build}"
+    addGitTag "${major}.${minor}.${build}"
+    echo "${major}.${minor}.${build}"
+  fi
+
 }
 
 main "$@"
