@@ -17,6 +17,10 @@ function addVerToFile {
   echo "$hash|$1|$(date +'%d-%m-%Y')" >|'version'
 }
 
+function addToGit {
+  eval "git add . && git add --update && git commit --amend --no-edit && git push --force"
+}
+
 function addGitTag {
   eval "git tag v$1 && git push origin v$1"
 }
@@ -94,6 +98,7 @@ function main() {
       fi
     done
     addVerToFile "${major}.${minor}.${build}"
+    addToGit
     addGitTag "${major}.${minor}.${build}"
     echo "${major}.${minor}.${build}"
   fi
