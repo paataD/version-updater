@@ -80,11 +80,11 @@ function main() {
   fi
 
   if [[ "$release" == "feat" ]]; then
-    minor=$(echo "$minor + 1" | bc)
+    minor=$(echo "$((minor + 1))")
   elif [[ "$release" == "fix" ]]; then
-    build=$(echo "$build + 1" | bc)
+    build=$(echo "$((build + 1))")
   elif [[ "$release" == "major" || "$release" == "breaking change" ]]; then
-    major=$(echo "$major+1" | bc)
+    major=$(echo "$((major + 1))")
   else
     help
     echo "Error"
