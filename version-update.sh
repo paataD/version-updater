@@ -18,11 +18,13 @@ function addVerToFile {
 }
 
 function addToGit {
-  eval "git add . && git add --update && git commit --amend --no-edit && git push --force"
+  git config user.email "teamcity@teamcity.com" || _exit $? "Could not set git user.email"
+  git config user.name "Teamcity" || _exit $? "Could not set git user.name"
+  git add . && git add --update && git commit --amend --no-edit && git push --force
 }
 
 function addGitTag {
-  eval "git tag v$1 && git push origin v$1"
+  git tag v"$1" && git push origin v"$1"
 }
 
 function newVersion {
