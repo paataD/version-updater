@@ -13,3 +13,12 @@ Example:
 ```
 
 Perfect suite for Laravel project
+
+| argument | description                                          |
+|----------|------------------------------------------------------|
+| release  | `minor` <br/> `fix` <br/> `major or breaking change` |
+| version  ||
+| togit    | boolean                                              |
+| gittag   | boolean                                              |
+| gitname  ||
+| gitemail ||

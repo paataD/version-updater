@@ -9,22 +9,29 @@ minor=0
 build=0
 hash=$(eval 'git rev-parse --short HEAD')
 
+if [[ -n $gittag || -n $togit ]]; then
+  git config user.email "$gitemail" || _exit $? "Could not set git user.email"
+  git config user.name "$gitname" || _exit $? "Could not set git user.name"
+fi
+
 function help {
   echo "Usage: $(basename "$0") version=<newversion> or release=[major|feat|fix]"
 }
 
 function addVerToFile {
-  echo "$hash|$1|$(date +'%d-%m-%Y')" >|'version'
+  echo "$hash|$1|$(date +'%d-%m-%Y %T')" >|'version'
 }
 
 function addToGit {
-  git config user.email "teamcity@teamcity.com" || _exit $? "Could not set git user.email"
-  git config user.name "Teamcity" || _exit $? "Could not set git user.name"
-  git add . && git add --update && git commit --amend --no-edit && git push --force
+  if [[ -n $togit ]]; then
+    git add . && git add --update && git commit --amend --no-edit && git push --force
+  fi
 }
 
 function addGitTag {
-  git tag v"$1" && git push origin v"$1"
+  if [[ -n $gittag && ! $(git tag -l v"$1") ]]; then
+      git tag v"$1" && git push origin v"$1"
+  fi
 }
 
 function newVersion {
@@ -79,6 +86,8 @@ function main() {
 
   if [[ -z "$release" && -n $message ]]; then
     release=$(echo "$message" | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
+    else
+    release=$(git show -s --format=%s | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
   fi
 
   if [[ "$release" == "feat" ]]; then
@@ -95,7 +104,7 @@ function main() {
 
   if newVersion; then
     for file in "${fileListArr[@]}"; do
-      if [[ -f file ]]; then
+      if [[ -f $file ]]; then
         setVersion "${major}.${minor}.${build}" "$file"
       fi
     done
