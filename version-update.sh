@@ -20,7 +20,7 @@ function addVerToFile {
 
 function addToGit {
   if [[ -n $togit ]]; then
-    git add . && git add --update && git commit --amend --no-edit && git push --force
+    git add . && git add --update && git commit --amend --reset-author --no-edit && git push --force
   fi
 }
 
@@ -109,8 +109,8 @@ function main() {
       fi
     done
     addVerToFile "${major}.${minor}.${build}"
-    addToGit
-    addGitTag "${major}.${minor}.${build}"
+    #addToGit
+    #addGitTag "${major}.${minor}.${build}"
   fi
   echo "${major}.${minor}.${build}"
 }
