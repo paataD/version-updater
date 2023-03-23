@@ -87,7 +87,7 @@ function main() {
   if [[ -z "$release" && -n $message ]]; then
     release=$(echo "$message" | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
     else
-    release=$(git show -s --format=%s | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
+    release=$(git log --no-merges --format=%s -1 | sed -E -e 's/^(fix|feat|major|breaking change):.*$/\1/g')
   fi
 
   if [[ "$release" == "feat" ]]; then
@@ -109,8 +109,8 @@ function main() {
       fi
     done
     addVerToFile "${major}.${minor}.${build}"
-    #addToGit
-    #addGitTag "${major}.${minor}.${build}"
+    addToGit
+    addGitTag "${major}.${minor}.${build}"
   fi
   echo "${major}.${minor}.${build}"
 }
