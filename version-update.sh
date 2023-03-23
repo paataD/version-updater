@@ -111,9 +111,8 @@ function main() {
     addVerToFile "${major}.${minor}.${build}"
     addToGit
     addGitTag "${major}.${minor}.${build}"
-    echo "${major}.${minor}.${build}"
   fi
-
+  echo "${major}.${minor}.${build}"
 }
 
 main "$@"
