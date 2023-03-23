@@ -108,11 +108,13 @@ function main() {
         setVersion "${major}.${minor}.${build}" "$file"
       fi
     done
+    echo "${major}.${minor}.${build}"
     addVerToFile "${major}.${minor}.${build}"
     addToGit
     addGitTag "${major}.${minor}.${build}"
+    exit
   fi
-  echo "${major}.${minor}.${build}"
+  echo "$PACKAGE_VERSION"
 }
 
 main "$@"
