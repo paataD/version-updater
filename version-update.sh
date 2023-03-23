@@ -9,10 +9,6 @@ minor=0
 build=0
 hash=$(eval 'git rev-parse --short HEAD')
 
-if [[ -n $gittag || -n $togit ]]; then
-  git config user.email "$gitemail" || _exit $? "Could not set git user.email"
-  git config user.name "$gitname" || _exit $? "Could not set git user.name"
-fi
 
 function help {
   echo "Usage: $(basename "$0") version=<newversion> or release=[major|feat|fix]"
@@ -58,6 +54,10 @@ function setVersion {
 
 function main() {
   parseArguments "$@"
+  if [[ -n $gittag || -n $togit ]]; then
+    git config user.email "$gitemail" || _exit $? "Could not set git user.email"
+    git config user.name "$gitname" || _exit $? "Could not set git user.name"
+  fi
   if [[ -n $version ]]; then
     if [[ "$version" =~ $versionPattern ]]; then
       for file in "${fileListArr[@]}"; do
