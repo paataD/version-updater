@@ -20,13 +20,13 @@ function addVerToFile {
 
 function addToGit {
   if [[ -n $togit ]]; then
-    git add . && git add --update && git commit --amend --reset-author --no-edit && git push --force
+    { git add . && git add --update && git commit --amend --reset-author --no-edit && git push --force; } > /dev/null 2>&1
   fi
 }
 
 function addGitTag {
   if [[ -n $gittag && ! $(git tag -l v"$1") ]]; then
-      git tag v"$1" && git push origin v"$1"
+      { git tag v"$1" && git push origin v"$1"; } > /dev/null 2>&1
   fi
 }
 
