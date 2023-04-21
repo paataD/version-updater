@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 fileListArr=("package.json" "composer.json")
 versionPattern="([0-9]+).([0-9]+).([0-9]+)"
@@ -7,7 +8,10 @@ expressionPattern="\w+=\w+"
 major=0
 minor=0
 build=0
-hash=$(eval 'git rev-parse --short HEAD')
+hash=h=$( (find ./ ! -name 'version'  -type f -print0  | sort -z | xargs -0 sha1sum;
+  find ./ \( -type f -o -type d \) -print0 | sort -z | \
+  xargs -0 stat -c '%n %a') \
+| sha1sum|head -c 40 )
 
 
 function help {
